@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+__pycache__/
+
+# Virtual environment
+venv/
+.env/
+.env.*
+
+# VS Code settings
+.vscode/
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Test coverage files
+.coverage
+*.cover
+
+# Build and distribution directories
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Secrets and environment variables
+*.env
+config.json
+
+# Auto-generated files from pip and Python tools
+pip-selfcheck.json
+pyvenv.cfg
+
+# Persistent undo files (if applicable)
+[._]*.un~
+
+# Thumbnails and temporary macOS items
+._*
+.DocumentRevisions-V100/
+.fseventsd/
+.Spotlight-V100/
+.TemporaryItems/
+.Trashes/
+.VolumeIcon.icns
+
+# Other IDEs (optional, if used alongside VS Code)
+.idea/
+*.sublime-workspace
