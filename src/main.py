@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler,LabelEncoder
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the telecom_churn dataset from a CSV file located in the './data/' directory
 df = pd.read_csv('./data/telecom_churn.csv')
@@ -32,3 +33,14 @@ df[num_cols] = scaler.fit_transform(df[num_cols])
 
 # Print DataFrame information to verify changes and ensure data integrity
 print(df.info())
+
+
+# Churn distribution
+sns.countplot(x='Churn', data=df)
+plt.title("Churn Distribution")
+plt.savefig("./figs/churn_distribution")
+# Correlation heatmap
+plt.figure(figsize=(12, 8))
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
+plt.title("Feature Correlation")
+plt.savefig("./figs/feature_correlation")
