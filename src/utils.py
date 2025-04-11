@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler,LabelEncoder
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def make_file():
     # Load the telecom_churn dataset from a CSV file located in the './data/' directory
@@ -34,3 +36,13 @@ def make_file():
     print(df.info())
     # Save the cleaned data to a file for future analysis or reuse.
     df.to_csv('./data/clean_data.csv', index=False)
+
+def EDA(df):
+    sns.countplot(x='Churn', data=df)
+    plt.title("Churn Distribution")
+    plt.savefig("./figs/EDA/churn_distribution")
+    # Correlation heatmap
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
+    plt.title("Feature Correlation")
+    plt.savefig("./figs/EDA/feature_correlation")

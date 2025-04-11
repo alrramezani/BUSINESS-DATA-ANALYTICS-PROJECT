@@ -1,8 +1,6 @@
 import os
-import clean_data_maker
+import utils
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -11,19 +9,11 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 # Check if the CSV file exists and load the cleaned dataset from './data/'
 if not os.path.exists("./data/clean_data.csv"):
-    clean_data_maker.make_file()
+    utils.make_file()
 df = pd.read_csv("./data/clean_data.csv")
 
-# Churn distribution
-sns.countplot(x='Churn', data=df)
-plt.title("Churn Distribution")
-plt.savefig("./figs/EDA/churn_distribution")
-# Correlation heatmap
-plt.figure(figsize=(12, 8))
-sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
-plt.title("Feature Correlation")
-plt.savefig("./figs/EDA/feature_correlation")
-
+#Exploratory Data Analysis
+utils.EDA(df)
 
 # Split the dataset into features (X) and target variable (y)
 X = df.drop('Churn', axis=1)  # Features
