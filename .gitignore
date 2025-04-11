@@ -57,3 +57,9 @@ pyvenv.cfg
 # Other IDEs (optional, if used alongside VS Code)
 .idea/
 *.sublime-workspace
+
+# Ignore all files in the figs folder
+figs/*
+
+# Ignore only clean_data.csv in the data folder
+data/clean_data.csv

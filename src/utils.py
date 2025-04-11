@@ -40,9 +40,9 @@ def make_file():
 def EDA(df):
     sns.countplot(x='Churn', data=df)
     plt.title("Churn Distribution")
-    plt.savefig("./figs/EDA/churn_distribution")
+    plt.savefig("./figs/churn_distribution")
     # Correlation heatmap
     plt.figure(figsize=(12, 8))
     sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
     plt.title("Feature Correlation")
-    plt.savefig("./figs/EDA/feature_correlation")
+    plt.savefig("./figs/feature_correlation")
