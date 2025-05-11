@@ -2,7 +2,10 @@ import utils
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -10,51 +13,61 @@ from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     ConfusionMatrixDisplay, roc_curve, auc
 )
-#load data and clean data
-df= utils.load_data('./data/telecom_churn.csv')
 
-# Define features and target
+# -----------------------------
+# Load and prepare data
+# -----------------------------
+df = utils.load_data('./data/telecom_churn.csv')
 X = df.drop('Churn', axis=1)
 y = df['Churn']
 
-# Split the data into training and testing sets (70% train, 30% test)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42
+# Identify column types
+numeric_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+categorical_features = X.select_dtypes(include=['object']).columns.tolist()
+
+# Preprocessing
+numeric_transformer = StandardScaler()
+categorical_transformer = OneHotEncoder(handle_unknown='ignore')
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ]
 )
 
-# Initialize classifiers
-lr = LogisticRegression()
-dt = DecisionTreeClassifier()
-rf = RandomForestClassifier(n_estimators=100)
+# Models to evaluate
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Decision Tree": DecisionTreeClassifier(),
+    "Random Forest": RandomForestClassifier(n_estimators=100)
+}
 
-# Train classifiers
-lr.fit(X_train, y_train)
-dt.fit(X_train, y_train)
-rf.fit(X_train, y_train)
+# StratifiedKFold for reproducible CV
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
-# Make predictions
-y_pred_lr = lr.predict(X_test)
-y_pred_dt = dt.predict(X_test)
-y_pred_rf = rf.predict(X_test)
-
-# Function to compute evaluation metrics
-def evaluate(y_true, y_pred, model_name):
+# Evaluation function
+def evaluate_model(name, model):
+    pipeline = Pipeline([
+        ('preprocessing', preprocessor),
+        ('classifier', model)
+    ])
+    accuracy = cross_val_score(pipeline, X, y, cv=skf, scoring='accuracy').mean()
+    precision = cross_val_score(pipeline, X, y, cv=skf, scoring='precision').mean()
+    recall = cross_val_score(pipeline, X, y, cv=skf, scoring='recall').mean()
+    f1 = cross_val_score(pipeline, X, y, cv=skf, scoring='f1').mean()
     return {
-        "Model": model_name,
-        "Accuracy": accuracy_score(y_true, y_pred),
-        "Precision": precision_score(y_true, y_pred),
-        "Recall": recall_score(y_true, y_pred),
-        "F1 Score": f1_score(y_true, y_pred)
+        "Model": name,
+        "Accuracy": accuracy,
+        "Precision": precision,
+        "Recall": recall,
+        "F1 Score": f1
     }
 
-# Evaluate all models and collect results
-results = [
-    evaluate(y_test, y_pred_lr, "Logistic Regression"),
-    evaluate(y_test, y_pred_dt, "Decision Tree"),
-    evaluate(y_test, y_pred_rf, "Random Forest")
-]
+# Run evaluations
+results = [evaluate_model(name, model) for name, model in models.items()]
 
-# Visualize the performance of all models using a bar chart
+# Visualize model comparison
 def plot_model_metrics(results):
     df_results = pd.DataFrame(results)
     df_results.set_index("Model", inplace=True)
@@ -70,23 +83,44 @@ def plot_model_metrics(results):
 
 plot_model_metrics(results)
 
-# Display confusion matrices for each model
-for model, name in zip([lr, dt, rf], ["Logistic Regression", "Decision Tree", "Random Forest"]):
-    disp = ConfusionMatrixDisplay.from_estimator(model, X_test, y_test, cmap='Blues')
+# -----------------------------
+# Optional: Confusion matrix & ROC curve for final fit
+# -----------------------------
+# Fit on full data and plot confusion matrix and ROC curve
+from sklearn.model_selection import train_test_split
+
+# Final train-test split to visualize metrics
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+
+for name, model in models.items():
+    pipeline = Pipeline([
+        ('preprocessing', preprocessor),
+        ('classifier', model)
+    ])
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+
+    # Confusion Matrix
+    disp = ConfusionMatrixDisplay.from_estimator(pipeline, X_test, y_test, cmap='Blues')
     disp.ax_.set_title(f"Confusion Matrix - {name}")
     plt.show()
 
-# Plot ROC curves and calculate AUC scores for each model
-def plot_roc(models, names):
+# Plot ROC curve for each
+def plot_roc(models_dict):
     plt.figure(figsize=(8, 6))
-    for model, name in zip(models, names):
+    for name, model in models_dict.items():
+        pipeline = Pipeline([
+            ('preprocessing', preprocessor),
+            ('classifier', model)
+        ])
+        pipeline.fit(X_train, y_train)
         if hasattr(model, "predict_proba"):
-            y_probs = model.predict_proba(X_test)[:, 1]
+            y_probs = pipeline.predict_proba(X_test)[:, 1]
             fpr, tpr, _ = roc_curve(y_test, y_probs)
             auc_score = auc(fpr, tpr)
             plt.plot(fpr, tpr, label=f"{name} (AUC = {auc_score:.2f})")
 
-    plt.plot([0, 1], [0, 1], 'k--')  # Diagonal line for random guessing
+    plt.plot([0, 1], [0, 1], 'k--')
     plt.title("ROC Curve")
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
@@ -95,4 +129,4 @@ def plot_roc(models, names):
     plt.tight_layout()
     plt.show()
 
-plot_roc([lr, dt, rf], ["Logistic Regression", "Decision Tree", "Random Forest"])
+plot_roc(models)
