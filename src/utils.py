@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler,LabelEncoder
-# Load the telecom_churn dataset from a CSV file located in the './data/' directory
-df = pd.read_csv('./data/telecom_churn.csv')
-def make_file():
+def make_file(path):
+    # Load the user (telecom_churn) dataset from a CSV file
+    df = pd.read_csv(path)
     # Display the first few rows of the DataFrame to get an initial view of the data
     print(df.head())
     # Print information about the DataFrame, including data types and missing values
@@ -33,3 +33,9 @@ def make_file():
     print(df.info())
     # Save the cleaned data to a file for future analysis or reuse.
     df.to_csv('./data/clean_data.csv', index=False)
+    
+def load_data(path):
+    make_file(path)
+    # Load the cleaned dataset
+    df = pd.read_csv("./data/clean_data.csv")
+    return df

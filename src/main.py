@@ -1,4 +1,3 @@
-import os
 import utils
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,14 +10,8 @@ from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     ConfusionMatrixDisplay, roc_curve, auc
 )
-
-# Ensure the cleaned dataset exists; if not, generate it
-if not os.path.exists("./data/clean_data.csv"):
-    utils.make_file()
-
-# Load the cleaned dataset
-df = pd.read_csv("./data/clean_data.csv")
-
+#load data and clean data
+df= utils.load_data('./data/telecom_churn.csv')
 
 # Define features and target
 X = df.drop('Churn', axis=1)
