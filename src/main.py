@@ -1,4 +1,3 @@
-# main.py
 import utils
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,6 +13,8 @@ from sklearn.metrics import (
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+import shap  # For SHAP values
 
 # Load and clean data
 df = utils.load_data('./data/telecom_churn.csv')
@@ -135,3 +136,35 @@ def plot_roc(models_dict):
     plt.show()
 
 plot_roc(final_models)
+
+# Feature Importance for Tree-based Models (Decision Tree and Random Forest)
+def plot_feature_importance(models_dict, X):
+    for name, model in models_dict.items():
+        if isinstance(model.named_steps['clf'], (DecisionTreeClassifier, RandomForestClassifier)):
+            importance = model.named_steps['clf'].feature_importances_
+            features = X.columns
+            importance_df = pd.DataFrame({
+                'Feature': features,
+                'Importance': importance
+            }).sort_values(by='Importance', ascending=False)
+
+            plt.figure(figsize=(10, 6))
+            plt.barh(importance_df['Feature'], importance_df['Importance'])
+            plt.xlabel("Feature Importance")
+            plt.title(f"Feature Importance - {name}")
+            plt.tight_layout()
+            plt.show()
+
+plot_feature_importance(final_models, X)
+
+# SHAP Values (Explaining Models)
+def plot_shap_values(models_dict, X):
+    for name, model in models_dict.items():
+        explainer = shap.TreeExplainer(model.named_steps['clf'])
+        shap_values = explainer.shap_values(X)
+        shap.summary_plot(shap_values[1], X, plot_type="bar", show=False)
+        plt.title(f"SHAP Summary Plot - {name}")
+        plt.tight_layout()
+        plt.show()
+
+plot_shap_values(final_models, X)
