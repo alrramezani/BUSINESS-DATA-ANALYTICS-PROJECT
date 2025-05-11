@@ -19,8 +19,6 @@ if not os.path.exists("./data/clean_data.csv"):
 # Load the cleaned dataset
 df = pd.read_csv("./data/clean_data.csv")
 
-# Run exploratory data analysis from the utils module
-utils.EDA()
 
 # Define features and target
 X = df.drop('Churn', axis=1)

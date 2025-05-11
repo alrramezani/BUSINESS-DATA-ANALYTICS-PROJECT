@@ -5,10 +5,11 @@
 ```text
 📦 telecom-churn-prediction/
 ├── 📁 data/        # Raw and processed datasets
-├── 📁 figs/        # Plots and visualizations from EDA and modeling
+├── 📁 figs/        # Plots and visualizations
+├── 📁 notebooks/   # Jupyter notebooks for EDA and analysis
 ├── 📁 src/
 │   ├── main.py     # Main script to run the project
-│   └── utils.py    # Helper functions for data cleaning and EDA
+│   └── utils.py    # Helper functions
 └── README.md       # Project documentation (this file)
 ```
 ---
@@ -47,7 +48,7 @@ Customer churn (i.e., customers leaving the service) significantly impacts reven
 - Encode categorical features (One-Hot or Label Encoding)
 - Normalize/scale numerical features
 
-### 📊 Exploratory Data Analysis (in `utils.py`)
+### 📊 Exploratory Data Analysis (in `notebooks/eda.ipynb`)
 - Visualize churn distribution
 - Analyze trends across customer attributes (e.g., contract type, tenure, payment method)
 
@@ -84,6 +85,7 @@ Models will be evaluated using the following:
 - 📁 Cleaned and preprocessed dataset (in `data/`)
 - 📊 Visualizations and EDA charts (in `figs/`)
 - 🐍 Python scripts for data pipeline and modeling (in `src/`)
+- 📓 Interactive EDA and modeling notebooks (in `notebooks/`)
 - 📄 Final report covering:
   - Business insights
   - Data analysis
