@@ -19,9 +19,6 @@ import shap  # For SHAP values
 # Load and clean data
 df = utils.load_data('./data/telecom_churn.csv')
 
-# Run exploratory data analysis from the utils module
-utils.EDA()
-
 X = df.drop('Churn', axis=1)
 y = df['Churn']
 
