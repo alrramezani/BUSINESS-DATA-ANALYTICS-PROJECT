@@ -5,7 +5,6 @@
 ```text
 📦 telecom-churn-prediction/
 ├── 📁 data/        # Raw and processed datasets
-├── 📁 figs/        # Plots and visualizations
 ├── 📁 notebooks/   # Jupyter notebooks for EDA and analysis
 ├── 📁 src/
 │   ├── main.py     # Main script to run the project
@@ -83,7 +82,6 @@ Models will be evaluated using the following:
 ## 📦 Deliverables
 
 - 📁 Cleaned and preprocessed dataset (in `data/`)
-- 📊 Visualizations and EDA charts (in `figs/`)
 - 🐍 Python scripts for data pipeline and modeling (in `src/`)
 - 📓 Interactive EDA and modeling notebooks (in `notebooks/`)
 - 📄 Final report covering:
