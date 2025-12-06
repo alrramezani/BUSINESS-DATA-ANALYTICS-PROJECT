@@ -157,15 +157,3 @@ def plot_feature_importance(models_dict, X):
             plt.show()
 
 plot_feature_importance(final_models, X)
-
-# SHAP Values (Explaining Models)
-def plot_shap_values(models_dict, X):
-    for name, model in models_dict.items():
-        explainer = shap.TreeExplainer(model.named_steps['clf'])
-        shap_values = explainer.shap_values(X)
-        shap.summary_plot(shap_values[1], X, plot_type="bar", show=False)
-        plt.title(f"SHAP Summary Plot - {name}")
-        plt.tight_layout()
-        plt.show()
-
-plot_shap_values(final_models, X)
